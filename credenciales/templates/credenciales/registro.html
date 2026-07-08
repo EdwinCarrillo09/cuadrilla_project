@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Cuadrilla Cindy Anchundia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex flex-col md:flex-row min-h-screen font-sans text-gray-800">
+
+    <aside class="w-full md:w-64 bg-slate-900 text-white p-6 flex flex-col shadow-lg">
+        <h2 class="text-xl font-bold text-center tracking-wide text-sky-400 pb-4 border-b border-slate-700 mb-6">
+            SISTEMA CUADRILLA
+        </h2>
+        <nav class="space-y-2">
+            <a href="#" class="flex items-center space-x-3 bg-slate-800 text-sky-400 font-semibold px-4 py-3 rounded-lg transition">
+                <span>📋</span> <span>Registro Credenciales</span>
+            </a>
+            <div class="opacity-40 flex items-center space-x-3 px-4 py-3 rounded-lg cursor-not-allowed">
+                <span>🔒</span> <span>Próxima Sección</span>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="flex-1 p-6 md:p-10 overflow-y-auto">
+        <div class="bg-white p-6 rounded-2xl shadow-sm mb-8">
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900">Sistema Cuadrilla Cindy Anchundia</h1>
+        </div>
+
+        <section class="bg-white rounded-2xl p-6 shadow-sm mb-8 border-l-4 border-emerald-500">
+            <h3 class="text-lg font-bold text-slate-800 mb-4">Nuevo Registro de Credencial</h3>
+            <form method="POST" class="space-y-4">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="flex flex-col">
+                        <label class="text-sm font-medium text-gray-600 mb-2">Cédula</label>
+                        <input type="text" name="cedula" required placeholder="Ej. 1314162692" 
+                               class="border border-gray-300 rounded-lg p-3 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition">
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="text-sm font-medium text-gray-600 mb-2">Apellidos y Nombres</label>
+                        <input type="text" name="apellidos_nombres" required placeholder="Ej. CARBO FERNANDEZ" 
+                               class="border border-gray-300 rounded-lg p-3 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition">
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="text-sm font-medium text-gray-600 mb-2">Turno</label>
+                        <select name="turno" required 
+                                class="border border-gray-300 rounded-lg p-3 bg-white outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition">
+                            <option value="">Seleccione un turno</option>
+                            <option value="Día">Día</option>
+                            <option value="Noche">Noche</option>
+                            <option value="Reimpresión de credencial">Reimpresión de credencial</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 text-white font-medium px-6 py-3 rounded-lg shadow transition">
+                    ➕ Agregar a la Lista
+                </button>
+            </form>
+        </section>
+
+        <section class="bg-white rounded-2xl p-6 shadow-sm">
+           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+    <h3 class="text-lg font-bold text-slate-800 border-l-4 border-emerald-500 pl-3">Listado Registrado</h3>
+    
+    <div class="flex flex-wrap gap-3">
+        <a href="{% url 'exportar_excel' %}" class="bg-green-700 hover:bg-green-800 text-white font-medium px-5 py-2.5 rounded-lg inline-flex items-center space-x-2 shadow transition">
+            <span>🟢</span> <span>Descargar Excel </span>
+        </a>
+
+                <form method="POST" action="{% url 'limpiar_registros' %}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar TODOS los registros de la lista actual? Esta acción no se puede deshacer.');">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-medium px-5 py-2.5 rounded-lg inline-flex items-center space-x-2 shadow transition">
+                        <span>🗑️</span> <span>Limpiar Tabla</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+            <div class="overflow-x-auto rounded-xl border border-gray-200">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-emerald-500 text-white text-sm uppercase tracking-wider">
+                            <th class="p-4 w-16 text-center">N°</th>
+                            <th class="p-4">Cédula</th>
+                            <th class="p-4">Apellidos y Nombres</th>
+                            <th class="p-4">Turno</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 text-sm">
+                        {% for reg in registros %}
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="p-4 font-medium text-gray-400 text-center">{{ forloop.counter }}</td>
+                            <td class="p-4 font-mono">{{ reg.cedula }}</td>
+                            <td class="p-4 font-semibold text-gray-700">{{ reg.apellidos_nombres }}</td>
+                            <td class="p-4"><span class="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">{{ reg.turno }}</span></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="p-8 text-center text-gray-400 font-medium">No hay registros cargados aún.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>
