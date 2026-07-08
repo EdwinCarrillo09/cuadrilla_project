@@ -1,9 +1,9 @@
-services:
-  - type: db
-    name: cuadrilla_db
+databases:
+  - name: cuadrilla_db
     databaseName: cuadrilla_sistema
     user: edwin_admin
 
+services:
   - type: web
     name: sistema-cuadrilla-cindy
     env: python
