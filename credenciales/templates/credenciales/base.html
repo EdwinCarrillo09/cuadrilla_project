@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Cuadrilla Cindy Anchundia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex flex-col md:flex-row min-h-screen font-sans text-gray-800">
+
+    <!-- BARRA LATERAL FIJA -->
+    <aside class="w-full md:w-64 bg-slate-900 text-white p-6 flex flex-col shadow-lg">
+        <!-- Enlace al Inicio al hacer clic en el título -->
+        <a href="{% url 'inicio' %}">
+            <h2 class="text-xl font-bold text-center tracking-wide text-sky-400 pb-4 border-b border-slate-700 mb-6 cursor-pointer hover:text-sky-300 transition">
+                SISTEMA CUADRILLA
+            </h2>
+        </a>
+        <nav class="space-y-2">
+            <!-- Botón Desplegable -->
+            <div>
+                <button onclick="toggleDropdown()" class="w-full flex items-center justify-between bg-slate-800 text-sky-400 font-semibold px-4 py-3 rounded-lg transition focus:outline-none">
+                    <div class="flex items-center space-x-3">
+                        <span>📋</span> 
+                        <span>Registro</span>
+                    </div>
+                    <span id="arrow" class="text-xs transition-transform duration-200">▼</span>
+                </button>
+                
+                <!-- Subsecciones -->
+                <div id="dropdown-menu" class="hidden pl-6 mt-1 space-y-1">
+                    <a href="#" class="block px-4 py-2 text-sm text-slate-300 hover:text-sky-400 rounded-lg hover:bg-slate-800/40 transition">
+                        • Codificación
+                    </a>
+                    <a href="{% url 'registro_credenciales' %}" class="block px-4 py-2 text-sm text-slate-300 hover:text-sky-400 rounded-lg hover:bg-slate-800/40 transition">
+                        • Credenciales
+                    </a>
+                </div>
+            </div>
+
+            <!-- Próxima Sección Bloqueada -->
+            <div class="opacity-40 flex items-center space-x-3 px-4 py-3 rounded-lg cursor-not-allowed">
+                <span>🔒</span> <span>Próxima Sección</span>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- ÁREA DE CONTENIDO DINÁMICO -->
+    <main class="flex-1 p-6 md:p-10 overflow-y-auto">
+        {% block contenido %}
+        <!-- Aquí se inyectará 'inicio.html' o 'credenciales.html' -->
+        {% endblock %}
+    </main>
+
+    <!-- JS para controlar la interactividad de la interfaz -->
+    <script>
+        function toggleDropdown() {
+            const menu = document.getElementById('dropdown-menu');
+            const arrow = document.getElementById('arrow');
+            menu.classList.toggle('hidden');
+            arrow.classList.toggle('rotate-180');
+        }
+
+        // Mantiene abierto el menú si estamos dentro de la sección "credenciales" al cargar la página
+        document.addEventListener("DOMContentLoaded", function() {
+            const menu = document.getElementById('dropdown-menu');
+            const arrow = document.getElementById('arrow');
+            if (window.location.pathname.includes("credenciales")) {
+                menu.classList.remove('hidden');
+                arrow.classList.add('rotate-180');
+            }
+        });
+    </script>
+</body>
+</html>
